@@ -1,0 +1,351 @@
+\documentclass[aspectratio=169]{beamer}
+% -- Formato
+\input{formatoBeamer}
+
+% -- Paquetes adicionales
+\usepackage{aleph-comandos}
+\usepackage{enumitem}
+\usepackage{multicol} 
+\usepackage{tikz}
+\usepackage{qrcode}
+\usepackage{fontawesome5}
+% -- Comandos extra
+
+
+% -- Datos
+\title{Introducción práctica al Machine Learning con Python}
+\author{Andrés Merino T.}
+\institute{}
+\date{Noviembre 2025}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% -- Página de título
+\fondo{inicio}
+\begin{frame}[plain]
+\addtocounter{framenumber}{-1}
+    \titlepage
+\end{frame}
+
+\fondo{blanco}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fondo{celeste}
+\section{Objetivo y agenda}
+\fondo{blanco}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Objetivo y agenda}
+\textbf{Objetivo:} comprender el flujo mínimo para aplicar Machine Learning en Python y reconocer decisiones clave (tipo de problema, datos, validación y métricas).
+
+\vspace{0.6em}
+\textbf{Agenda}
+\begin{itemize}
+  \item ¿Qué es Machine Learning y cuándo usarlo?
+  \item Supervisado vs no supervisado
+  \item Métricas y validación
+  \item Flujo de trabajo en ML
+  \item Demo práctica en Python
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fondo{celeste}
+\section{¿Qué es Machine Learning?}
+\fondo{blanco}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{¿Qué es Machine Learning?}
+\begin{itemize}
+    \item El Aprendizaje Automático (Machine Learning) es una subdisciplina de la Inteligencia Artificial que se centra en el desarrollo de algoritmos y modelos que permiten a las máquinas aprender a partir de datos sin ser explícitamente programadas para cada tarea específica.
+    \item Tom Mitchell (1997): Se dice que un programa de computadora aprende de la {experiencia $E$} con respecto a alguna clase de {tareas $T$} y medida de {desempeño $P$}, si su desempeño en $T$, medido por $P$, {mejora con la experiencia $E$}.
+\end{itemize}
+
+\end{frame}
+
+% --- 3) Ejemplos ---
+\begin{frame}{Ejemplos típicos de ML}
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
+\textbf{Clasificación}
+\begin{itemize}
+  \item spam / no spam
+  \item fraude / no fraude
+  \item aprobación / reprobación
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Regresión}
+\begin{itemize}
+  \item demanda
+  \item precio
+  \item tiempo estimado
+\end{itemize}
+\end{columns}
+
+\vspace{0.7em}
+\textbf{No supervisado}
+\begin{itemize}
+  \item segmentación (clustering), reducción de dimensión, detección de anomalías
+\end{itemize}
+\end{frame}
+
+% --- 4) Cuándo usar / no usar ---
+\begin{frame}{¿Cuándo usar (y cuándo no usar) ML?}
+\textbf{Usar ML cuando:}
+\begin{itemize}
+  \item el patrón es complejo y reglas manuales no escalan,
+  \item hay datos suficientes y representativos,
+  \item el objetivo y el costo del error están claros.
+\end{itemize}
+
+\vspace{0.8em}
+\textbf{Evitar ML si:}
+\begin{itemize}
+  \item una regla simple resuelve la mayor parte del caso,
+  \item los datos son escasos/inestables o la etiqueta es poco confiable,
+  \item no existe plan de evaluación y monitoreo.
+\end{itemize}
+\end{frame}
+
+% --- 5) Conceptos mínimos ---
+\begin{frame}{Conceptos mínimos (para no perderse)}
+\begin{itemize}
+  \item \textbf{Feature (variable):} columna de entrada ($X$).
+  \item \textbf{Etiqueta (target):} lo que se quiere predecir ($y$).
+  \item \textbf{Modelo:} algoritmo + parámetros aprendidos.
+  \item \textbf{Entrenar:} ajustar el modelo con datos de entrenamiento.
+  \item \textbf{Predecir:} estimar $y$ para datos nuevos.
+  \item \textbf{Generalización:} desempeño en datos no vistos.
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fondo{celeste}
+\section{Supervisado vs no supervisado}
+\fondo{blanco}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% --- 6) Supervisado vs no supervisado ---
+\begin{frame}{Supervisado vs no supervisado}
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
+\textbf{Aprendizaje supervisado}
+\begin{itemize}
+  \item Datos: $(X, y)$
+  \item Objetivo: predecir $y$
+  \item Tareas: clasificación, regresión
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Aprendizaje no supervisado}
+\begin{itemize}
+  \item Datos: $X$
+  \item Objetivo: descubrir estructura
+  \item Tareas: clustering, PCA, anomalías
+\end{itemize}
+\end{columns}
+
+\vspace{0.6em}
+\textbf{Pregunta guía:} ¿tengo una etiqueta confiable para aprender?
+\end{frame}
+
+% --- 7) Ejemplos supervisado ---
+\begin{frame}{Supervisado: clasificación vs regresión}
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
+\textbf{Clasificación}
+\begin{itemize}
+  \item salida discreta (clases)
+  \item ejemplo: \textit{riesgo alto/medio/bajo}
+\end{itemize}
+\textbf{Salida:} ${y}\in\{0,1,\dots\}$
+
+\column{0.48\textwidth}
+\textbf{Regresión}
+\begin{itemize}
+  \item salida continua
+  \item ejemplo: \textit{monto esperado}
+\end{itemize}
+\textbf{Salida:} ${y}\in\mathbb{R}$
+\end{columns}
+\end{frame}
+
+\begin{frame}{Supervisado: idea matemática}
+\begin{itemize}
+  \item Disponemos de un conjunto de datos etiquetados:
+  \[
+    \mathcal{D}=\{(x_i, y_i)\}_{i=1}^n,
+  \]
+  donde \(x_i\) son los datos de entrada (variables, features) y \(y_i\) la etiqueta o salida observada.
+  
+  \item Suponemos que existe una función (desconocida) \(f\) tal que:
+  \[
+    y = f(x).
+  \]
+
+  \item El objetivo del aprendizaje supervisado es encontrar una función aproximante \(\tilde{f}\) tal que:
+  \[
+    \tilde{f}(x) \approx y.
+  \]
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fondo{celeste}
+\section{Métricas y validación}
+\fondo{blanco}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Métricas y validación}
+\begin{itemize}
+  \item Una vez obtenida la función aproximante \(\tilde{f}\), surge la pregunta:
+  \[
+    \text{¿Qué tan bien aproxima } \tilde{f}(x) \text{ a } y?
+  \]
+
+  \item Evaluamos el desempeño mediante una \textbf{métrica de error} en datos observados:
+  \begin{itemize}
+    \item Clasificación: accuracy, precision, recall, F1
+    \item Regresión: MAE, MSE, RMSE
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{itemize}
+  \item \textbf{Sobreajuste (overfitting):}
+  \begin{itemize}
+    \item \(\tilde{f}\) se ajusta demasiado a los datos.
+    \item Aprende el ruido en lugar del patrón general.
+    \item Resultado: muy buen desempeño en datos conocidos, mal desempeño en datos nuevos.
+  \end{itemize}
+
+  \item \textbf{Motivación del split train/test:}
+  \begin{itemize}
+    \item Dividimos el conjunto de datos conocidos en dos grupos: train/test.
+    \item Entrenamos \(\tilde{f}\) con \textbf{train}.
+    \item Evaluamos qué tan bien generaliza usando \textbf{test} (datos conocidos pero no vistos).
+    \item El conjunto test actúa como un ``examen final'' de la función.
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fondo{celeste}
+\section{Flujo de trabajo en ML}
+\fondo{blanco}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Flujo de trabajo en Machine Learning}
+\begin{enumerate}
+  \item \textbf{Entender el problema (contexto/negocio)}
+  \begin{itemize}
+    \item ¿Qué decisión se quiere apoyar? ¿Cuál es el objetivo?
+    \item ¿Qué significa un error? ¿Cuál es su costo?
+  \end{itemize}
+
+  \item \textbf{Entender los datos}
+  \begin{itemize}
+    \item ¿Qué variables existen? ¿Cómo se generan?
+    \item Revisar calidad: nulos, ruido, sesgos, cobertura.
+  \end{itemize}
+
+  \item \textbf{Definir el problema de ML}
+  \begin{itemize}
+    \item Tipo: clasificación, regresión o no supervisado.
+    \item Variable objetivo, unidad de análisis y horizonte.
+  \end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Flujo de trabajo en Machine Learning}
+\begin{enumerate}[start=4]
+  \item \textbf{Preparar los datos}
+  \begin{itemize}
+    \item Limpieza, selección/creación de variables, escalado/categóricas.
+    \item Separar en \textbf{train} y \textbf{test}.
+  \end{itemize}
+
+  \item \textbf{Entrenar el modelo}
+  \begin{itemize}
+    \item Empezar con un baseline simple.
+    \item Ajustar el modelo con datos de entrenamiento.
+  \end{itemize}
+
+  \item \textbf{Medir desempeño}
+  \begin{itemize}
+    \item Evaluar en entrenamiento (diagnóstico) y en test (generalización).
+    \item Usar métricas adecuadas al problema.
+  \end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Flujo de trabajo en Machine Learning}
+\begin{enumerate}[start=7]
+  \item \textbf{Iterar y mejorar}
+  \begin{itemize}
+    \item Mejorar datos, variables, modelo o validación.
+    \item Comparar resultados y documentar.
+  \end{itemize}
+\end{enumerate}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fondo{celeste}
+\section{Demo práctica en Python}
+\fondo{blanco}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\begin{center}\color{azul}
+    \qrcode[height=5.5cm]{https://linktr.ee/aemerinot}
+    \\[5mm]
+    Cuaderno de Jupyter
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Página final
+\fondo{final}
+\begin{frame}[plain]
+\begin{center}
+    \color{azul}
+    
+    \vspace{1.5cm}
+    {\Huge\textbf{Gracias}}
+    \vspace{2mm}
+    
+
+    \begin{tabular}{ccc}
+    \colorbox{white}{\textcolor{azul}{\qrcode[height=3cm]{https://linktr.ee/aemerinot}}}
+    &
+    \phantom{.\hspace{.5cm}.}
+    &
+    \colorbox{white}{\textcolor{azul}{\qrcode[height=3cm]{https://github.com/andres-merino/Curso-FundMachineLearning/blob/main/1-Webinar/Webinar.ipynb}}}
+    \\[16mm]
+    \LARGE \faLinkedin\hspace{5mm}\faGithub
+    &&
+    Presentación
+\end{tabular}
+\\
+    \vspace{2mm}
+    \textbf{Contacto:} aemerinot@gmail.com
+\end{center}
+\end{frame}
+
+\begin{frame}[plain]
+\begin{center}
+    \includegraphics[width=7cm]{1-Webinar/fig01.jpeg}
+\end{center}
+\end{frame}
+
+\end{document}
