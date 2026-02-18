@@ -8,7 +8,6 @@
 \usepackage{colortbl}
 \usepackage{longtable}
 \usepackage{url}
-\usepackage{pdflscape}
 
 % -- Datos 
 \institucion{Sociedad Ecuatoriana de Estadística}
@@ -79,8 +78,7 @@
     \item \textbf{Reto 2 (60\%):} Consistirá en la aplicación de modelos de aprendizaje supervisado en un escenario del mundo real, ajustando los modelos para maximizar su precisión y eficiencia mediante el ajuste de hiperparámetros y regularización.
 \end{itemize}
 
-
-\begin{landscape}
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Cronograma de Desarrollo del Curso} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,58 +86,31 @@
 \begin{center}\small
 \setlength{\extrarowheight}{0ex}
 \setlength{\belowrulesep}{.6ex}
-\begin{longtable}{cccL{12cm}L{7.5cm}}
+\begin{longtable}{cccL{12cm}}
     \toprule
-    &&\thead{Fecha}&\thead{Detalle de contenido} & \thead{Observación} \\
+    &&\thead{Fecha}&\thead{Detalle de contenido}  \\
     \midrule
   \endfirsthead
-    \multicolumn{5}{l}{\footnotesize \ldots viene de la página anterior}\\
+    \multicolumn{4}{l}{\footnotesize \ldots viene de la página anterior}\\
     \toprule
-    &&\thead{Fecha}&\thead{Detalle de contenido} & \thead{Observación} \\
+    &&\thead{Fecha}&\thead{Detalle de contenido}  \\
     \midrule
   \endhead
-        \bottomrule  \multicolumn{5}{r}{\footnotesize Continúa en la siguiente página\ldots}
+        \bottomrule  \multicolumn{4}{r}{\footnotesize Continúa en la siguiente página\ldots}
   \endfoot
         \bottomrule
   \endlastfoot
-1	&	1	&	24-nov	&	Introducción al curso	&		\\	
-	&	2	&	25-nov	&	Conceptos básicos del Aprendizaje Automático	&	Envío del Reto 1 (Criterio 3.1)	\\	
-	&	3	&	26-nov	&	Conjuntos de Entrenamiento y Validación	&		\\	
-	&	4	&	27-nov	&	Preparación de los Datos	&		\\ \midrule	
-2	&	5	&	01-dic	&	Evaluación de Modelos I	&		\\	
-	&	5	&	02-dic	&	Evaluación de Modelos II	&		\\	
-	&	6	&	03-dic	&	Reducción de Dimensionalidad y Extracción de Características	&		\\	
-	&		&	04-dic	&	Taller de implementación	&		\\ \midrule	\rowcolor{celeste!50}
-3	&		&	08-dic	&	Cuestionario en línea 1 (Criterio 1.1)	&	Evaluación	\\	
-	&	7	&	09-dic	&	Introducción al Aprendizaje No Supervisado	&	Envío de la Video exp. 1 (Criterio 1.2)	\\	
-	&	8	&	10-dic	&	Algoritmos de Agrupamiento Jerárquico	&		\\	
-	&	9	&	11-dic	&	Agrupamiento k-Means	&		\\ \midrule	
-4	&		&	15-dic	&	Desarrollo del Reto 1	&	Entrega del Reto 1 (Criterio 3.1)	\\	\rowcolor{celeste!50}
-	&		&	16-dic	&	Cuestionario en línea 2 (Criterio 1.2); Examen 1 (Criterio 2.1)	&	Evaluación	\\	
-	&	10	&	17-dic	&	Algoritmo k-Nearest Neighbors	&	Entrega de la Video exp. 1 (Criterio 1.2)	\\	
-	&	11	&	18-dic	&	Máquinas de Vectores Soporte (SVM)	&	Envío de la Video exp. 2 (Criterio 1.3)	\\ \midrule	
-	&	11	&	22-dic	&	Ajuste y Optimización de SVM	&	Envío del Reto 2 (Criterio 3.2)	\\	
-	&		&	23-dic	&	Taller de implementación	&		\\	\rowcolor{verde!50}
-	&		&	24-dic	&		&	Feriado	\\	\rowcolor{verde!50}
-	&		&	25-dic	&		&	Feriado	\\ \midrule	
-5	&	12	&	05-ene	&	Redes Neuronales: Introducción	&		\\	
-	&	13	&	06-ene	&	Perceptrón sigmoide y multiclase	&		\\	
-	&	14	&	07-ene	&	Perceptrón multicapa	&		\\	
-	&	15	&	08-ene	&	Entrenamiento de redes neuronales	&		\\ \midrule	
-6	&		&	12-ene	&	Taller de implementación	& Envío de exposiciones		\\	
-	&	16	&	13-ene	&	Árboles de Decisión	&		\\	
-	&	17	&	14-ene	&	Bosques Aleatorios	&		\\	
-	&		&	15-ene	&	Taller de implementación	&	Entrega de la Video exp. 2 (Criterio 1.3)	\\ \midrule	
-7	&		&	19-ene	&	Desarrollo del Reto 2	&		\\	\rowcolor{celeste!50}
-	&		&	20-ene	&	Cuestionario en línea 3 (Criterio 1.3); Examen 2 (Criterio 2.2)	&	Evaluación	\\	
-	&	18	&	21-ene	&	Evaluación de Modelos: Validación cruzada	&		\\	
-	&	18	&	22-ene	&	Búsqueda de Hiperparámetros	&		\\ \midrule	
-8	&		&	26-ene	&	Taller de implementación	&	Entrega del Reto 2 (Criterio 3.2)	\\	\rowcolor{celeste!50}
-	&		&	27-ene	&	Exposiciones	&	Evaluación	\\	\rowcolor{celeste!50}
-	&		&	28-ene	&	Exposiciones	&	Evaluación	\\	
-	&		&	29-ene	&	Retroalimentación	&		\\ 
+1	&	1	&	18-feb	&	Conceptos básicos del Aprendizaje Automático \\	
+	&	2	&	19-feb	&	Preparación de datos: normalización y PCA	\\	
+	&	3	&	20-feb	&	Conjuntos de entrenamiento y prueba; validación cruzada	\\	\midrule	
+2	&	4	&	23-feb	&	Aprendizaje no supervisado: métricas e interpretación \\	
+	&	5	&	24-feb	&	Agrupamiento k-Means y Clustering jerárquico	\\ 
+	&	6	&	25-feb	&	Aprendizaje supervisado: métricas y k-NN	\\	
+	&	7	&	26-feb	&	SVM	y Árboles de decisión\\	
+	&	8	&	27-feb	&	Redes neuronales: perceptrón y perceptrón multicapa	\\	\midrule	
+3	&	9	&	02-mar	&	Ensamble de modelos	\\	
+	&	10	&	03-mar	&	Optimización de hiperparámetros y guardado de modelos	\\	
 \end{longtable}
 \end{center}
-\end{landscape}
 
 \end{document} 
