@@ -1,0 +1,201 @@
+\documentclass[a4,11pt]{aleph-notas}
+% Se puede ver la documentación aquí: 
+% https://github.com/alephsub0/LaTeX_aleph-notas
+
+% -- Paquetes adicionales 
+\usepackage{enumitem}
+\usepackage{aleph-comandos}
+\usepackage{booktabs}
+\usepackage{amsmath}
+
+
+% -- Datos 
+\institucion{Sociedad Ecuatoriana de Estadística}
+\asignatura{Fundamentos de Machine Learning}
+\tema{Resumen no. 2: Preprocesamiento de Datos}
+\autor{Andrés Merino}
+\fecha{Febrero 2026}
+
+\logouno[0.14\textwidth]{Logos/logoSEE}
+\definecolor{colortext}{HTML}{008dc3}
+\definecolor{colordef}{HTML}{008dc3}
+\fuente{montserrat}
+
+
+% -- Comandos adicionales
+\setlist[enumerate]{label=\roman*.}
+\DeclareMathOperator*{\argmax}{\arg\,\max}
+
+\begin{document}
+
+\encabezado
+
+
+\section{Normalización de datos}
+
+\begin{defi}[Normalización por el máximo]
+    Dado un conjunto de datos \(X = \{x_1, x_2, \ldots, x_n\}\), la normalización por el máximo transforma cada dato \(x_i\) en \(x_i'\) según la fórmula:
+    \[
+    x_i' = \frac{x_i}{\max(X)}
+    \]
+\end{defi}
+
+\begin{defi}[Normalización Min-Max]
+    Dado un conjunto de datos \(X = \{x_1, x_2, \ldots, x_n\}\), la normalización Min-Max transforma cada dato \(x_i\) en \(x_i'\) según la fórmula:
+    \[
+    x_i' = \frac{x_i - \min(X)}{\max(X) - \min(X)}
+    \]
+\end{defi}
+
+\begin{defi}[Estandarización (Z-score)]
+    Dado un conjunto de datos \(X = \{x_1, x_2, \ldots, x_n\}\), la estandarización transforma cada dato \(x_i\) en \(x_i'\) según la fórmula:
+    \[
+    x_i' = \frac{x_i - \mu}{\sigma}
+    \]
+    donde \(\mu\) es la media del conjunto de datos y \(\sigma\) es la desviación estándar. 
+\end{defi}
+
+\section{Discretización de datos}
+
+\begin{defi}[Discretización de igual amplitud]
+    Dado un conjunto de datos continuo \(X = \{x_1, x_2, \ldots, x_n\}\) y un número \(k\) de intervalos, la discretización de igual amplitud divide el rango de los datos en \(k\) intervalos de igual tamaño. Cada dato \(x_i\) se asigna al intervalo correspondiente. El tamaño de cada intervalo es:
+    \[
+    \text{Tamaño del intervalo} = \frac{\max(X) - \min(X)}{k}
+    \]
+\end{defi}
+
+\begin{defi}[Discretización de igual frecuencia]
+    Dado un conjunto de datos continuo \(X = \{x_1, x_2, \ldots, x_n\}\) y un número \(k\) de intervalos, la discretización de igual frecuencia divide los datos en \(k\) intervalos de tal manera que cada intervalo contenga aproximadamente el mismo número de datos. Cada dato \(x_i\) se asigna al intervalo correspondiente.
+\end{defi}
+
+\newpage
+\section{Datos categóricos}
+
+\begin{defi}[Codificación One-Hot]
+    Dado un conjunto de datos categóricos \(C = \{c_1, c_2, \ldots, c_m\}\) con \(m\) categorías distintas, la codificación One-Hot transforma cada categoría \(c_j\) en un vector binario de longitud \(m\), donde el elemento correspondiente a la categoría es 1 y los demás son 0.
+\end{defi}
+
+Ejemplo: En la siguiente tabla se aplica la codificación One-Hot a la variable categórica «Color» con las categorías «Rojo», «Verde» y «Azul».
+\begin{center}
+    \begin{tabular}{l}
+        \toprule
+        Color \\
+        \midrule
+        Rojo \\
+        Verde \\
+        Azul \\
+        Verde \\
+        Rojo \\
+        \bottomrule
+    \end{tabular}
+    \quad
+    $\xrightarrow{\text{One-Hot}}$
+    \quad
+    \begin{tabular}{ccc}
+        \toprule
+        Rojo & Verde & Azul \\
+        \midrule
+        1 & 0 & 0 \\
+        0 & 1 & 0 \\
+        0 & 0 & 1 \\
+        0 & 1 & 0 \\
+        1 & 0 & 0 \\
+        \bottomrule 
+    \end{tabular}
+\end{center}
+
+\section{Análisis de Componentes Principales (PCA)}
+
+\begin{defi}[Componente principal como dirección de máxima información]
+Sea \(X \in \mathbb{R}^{n \times p}\) una matriz de datos centrada (cada variable con media cero).  
+La primera componente principal es el vector unitario \(w \in \mathbb{R}^{p}\) que maximiza la información preservada, medida como la varianza de la proyección de los datos sobre dicha dirección:
+\[
+w^\ast = \argmax_{\|w\|=1} \operatorname{Var}(Xw)
+\]
+Equivalente a:
+\[
+w^\ast = \argmax_{\|w\|=1} w^\top \Sigma w
+\]
+donde \(\Sigma = \frac{1}{n}X^\top X\) es la matriz de covarianza.
+\end{defi}
+
+\begin{teo}
+Sea \(\Sigma\) la matriz de covarianza de los datos centrados.  
+El vector que define la primera componente principal es el vector propio asociado al mayor valor propio de \(\Sigma\).  
+
+En general, si
+\[
+\Sigma v_i = \lambda_i v_i, \quad \lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_p \ge 0,
+\]
+entonces:
+\begin{itemize}
+    \item La \(i\)-ésima componente principal es el vector propio \(v_i\).
+    \item La varianza explicada por dicha componente es \(\lambda_i\).
+\end{itemize}
+\end{teo}
+
+\begin{defi}[Transformación PCA]
+Sea \(W_k = [v_1,\ldots,v_k]\) la matriz cuyas columnas son los \(k\) vectores propios asociados a los mayores valores propios de la matriz de covarianza \(\Sigma\).  
+
+Las proyecciones principales de los datos \(X\) sobre el subespacio generado por estas direcciones se obtienen como:
+\[
+Z = X W_k
+\]
+donde cada columna de \(Z \in \mathbb{R}^{n \times k}\) contiene las coordenadas de los datos proyectados sobre una componente principal.  
+\end{defi}
+
+
+\section{Descomposición en Valores Singulares (SVD)}
+
+\begin{teo}
+    Sea \(A \in \mathbb{R}^{m \times n}\) una matriz de rango \(r\). Entonces, existen únicas matrices \(U \in \mathbb{R}^{m \times m}\), \(V \in \mathbb{R}^{n \times n}\) y \(\Sigma \in \mathbb{R}^{m \times n}\) tal que
+    \[
+        A = U \Sigma V^T,
+    \]
+    donde
+    \begin{itemize}
+        \item $U$ y $V$ son matrices ortogonales.
+        \item $\Sigma$ es una matriz diagonal con entradas no negativas en la diagonal.
+        \item Las entradas de $\Sigma$ están ordenadas de manera decreciente.
+    \end{itemize}
+
+    A los valores en la diagonal de \(\Sigma\) se les llama valores singulares de \(A\), y las columnas de \(U\) y \(V\) se llaman vectores singulares izquierdos y derechos, respectivamente.
+\end{teo}
+
+\begin{proof}
+    Supongamos que la descomposición existe, es decir, \(A = U \Sigma V^T\), nuestro objetivo es encontrar las matrices \(U\), \(\Sigma\) y \(V\).
+
+    Primero, consideremos la matriz \(A^T A\), esta es simétrica; por el teorema espectral, también es diagonalizable y todos sus valores propios son no negativos. Sea \(P\) la matriz cuyas columnas son los vectores propios ortonormales de \(A^T A\), y sea \(D\) la matriz diagonal cuyos elementos son los valores propios correspondientes. Entonces, podemos escribir
+    \[
+        A^T A = P D P^T.
+    \]
+    Por otro lado, como suponemos que \(A = U \Sigma V^T\), tenemos
+    \[
+        A^T A = (U \Sigma V^T)^T (U \Sigma V^T) = V \Sigma^T U^T U \Sigma V^T = V \Sigma^T \Sigma V^T.
+    \]
+    Comparando ambas expresiones para \(A^T A\), obtenemos
+    \[
+        P D P^T = P \Sigma^T \Sigma P^T.
+    \]
+    Así, podemos tomar
+    \[
+        V = P, \quad \Sigma^T \Sigma = D.
+    \]
+    Como tanto $D$ y $\Sigma$ son diagonales, tenemos que $\sigma_{ii}^2 = \lambda_{ii}$. Por otro lado, como los valores propios de \(A^T A\) son no negativos, podemos tomar
+    \[
+        \sigma_{ii} = \sqrt{\lambda_{ii}}.
+    \]
+
+    Ahora, tomemos $v_i$ las columnas de $V$ y $u_i$ las columnas de $U$. Observemos que, como $V$ es ortogonal, tenemos que $V^T v_i = e_i$, donde $e_i$ es el vector canónico. Entonces, de $A = U\Sigma V^T$, tenemos que
+    \[
+        A v_i = U \Sigma V^T v_i = U \Sigma e_i = U \sigma_{ii} e_i = \sigma_{ii} u_i,
+    \]
+    así, podemos tomar
+    \[
+        u_i = \frac{1}{\sigma_{ii}} A v_i.
+    \]
+    De esta manera, tenemos la descomposición en valores singulares.
+\end{proof}
+
+
+\end{document}
