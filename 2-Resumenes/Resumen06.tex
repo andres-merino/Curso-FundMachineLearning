@@ -1,0 +1,247 @@
+\documentclass[a4,11pt]{aleph-notas}
+% Se puede ver la documentación aquí: 
+% https://github.com/alephsub0/LaTeX_aleph-notas
+
+% -- Paquetes adicionales 
+\usepackage{enumitem}
+\usepackage{aleph-comandos}
+\usepackage{booktabs}
+
+
+% -- Datos 
+\institucion{Sociedad Ecuatoriana de Estadística}
+\asignatura{Fundamentos de Machine Learning}
+\tema{Resumen no. 6: Aprendizaje supervisado; K-NN}
+\autor{Andrés Merino}
+\fecha{Febrero 2026}
+
+\logouno[0.14\textwidth]{Logos/logoSEE}
+\definecolor{colortext}{HTML}{008dc3}
+\definecolor{colordef}{HTML}{008dc3}
+\fuente{montserrat}
+
+
+% -- Comandos adicionales
+\setlist[enumerate]{label=\roman*.}
+\DeclareMathOperator*{\argmax}{\arg\,\max}
+
+\begin{document}
+
+\encabezado
+
+
+\begin{defi}[Función de pérdida]
+Sea $\hat{f} : \mathbb{R}^n \to \mathbb{R}$ un modelo y sea $(x_i,y_i)$ una instancia del conjunto de entrenamiento.  
+Una \textbf{función de pérdida} es una función
+\[
+    L : \mathbb{R} \times \mathbb{R} \to \mathbb{R}_{\ge 0}
+\]
+que mide el error entre la predicción $\hat{y}=\hat{f}(x_i)$ y el valor real $y_i$.  
+
+El riesgo empírico (error promedio en entrenamiento) se define como:
+\[
+    R(f) = \frac{1}{m}\sum_{i=1}^{m} L\big(f(x_i),y_i\big).
+\]
+El objetivo del aprendizaje es determinar una función $\hat{f}$ que minimice $R(\hat{f})$.
+\end{defi}
+
+\begin{defi}[Hipótesis]
+En aprendizaje supervisado no se busca cualquier función, sino una función dentro de una familia $\mathcal{H}$ denominada \textbf{espacio de hipótesis}.  
+
+Cada modelo de aprendizaje (k-NN, SVM, redes neuronales, árboles, etc.) supone una forma particular de función $f$ y el proceso de entrenamiento consiste en seleccionar, dentro de esa familia, la función que minimiza la función de pérdida sobre los datos de entrenamiento.
+\end{defi}
+
+\begin{defi}[Sobreajuste]
+Se dice que un modelo presenta \textbf{sobreajuste} cuando logra un error muy bajo sobre el conjunto de entrenamiento pero un error significativamente mayor sobre datos no vistos.  
+
+Esto ocurre cuando la función aprendida se ajusta excesivamente a las particularidades y ruido de los datos de entrenamiento, perdiendo capacidad de generalización.
+\end{defi}
+
+\begin{defi}[Generalización]
+Un modelo tiene buena capacidad de generalización si su error sobre datos no vistos es cercano a su error en entrenamiento.
+\end{defi}
+
+
+\section{Métricas de clasificación}
+
+Consideremos un problema de clasificación binaria $\func{f}{X}{\{0,1\}}$ y un modelo de clasificación $\func{\hat{f}}{X}{\{0,1\}}$ que intenta aproximar a $f$. Además, sea un conjunto de datos $D = \{(x_i,y_i)\}_{i=1}^n$ el conjunto de datos utilizado para evaluar el desempeño del modelo, donde $y_i = f(x_i)$. ${f}$
+
+Definimos los siguientes términos:
+
+
+\begin{center}
+\footnotesize 
+\begin{tabular}{p{5cm}@{\hspace{5mm}}l@{\hspace{15mm}}l}
+\toprule
+\textbf{Medida} & \textbf{Definición} & \textbf{Igual a} \\[5mm]
+\midrule
+número de positivos & $Pos = \displaystyle\sum_{x \in D} I[f(x) = 1]$ & \\[5mm]
+número de negativos & $Neg = \displaystyle\sum_{x \in D} I[f(x) = 0]$ & \\[5mm]
+verdaderos positivos & $TP = \displaystyle\sum_{x \in D} I[\hat{f}(x) = f(x) = 1]$ & \\[5mm]
+verdaderos negativos & $TN = \displaystyle\sum_{x \in D} I[\hat{f}(x) = f(x) = 0]$ & \\[5mm]
+falsos positivos & $FP = \displaystyle\sum_{x \in D} I[\hat{f}(x) = 1, f(x) = 0]$ & \\[5mm]
+falsos negativos & $FN = \displaystyle\sum_{x \in D} I[\hat{f}(x) = 0, f(x) = 1]$ & \\[5mm]
+\textbf{exactitud} (accuracy) & $acc = \dfrac{1}{|Te|} \displaystyle\sum_{x \in D} I[\hat{f}(x) = f(x)]$ &  $\dfrac{TP+TN}{|D|}$\\[5mm]
+\textbf{error} & $err = \dfrac{1}{|Te|} \displaystyle\sum_{x \in D} I[\hat{f}(x) \neq f(x)]$ &  $\dfrac{FP+FN}{|D|}$ \\[5mm]
+\textbf{precisión}, confianza & $pre = \dfrac{\displaystyle\sum_{x \in D} I[\hat{f}(x) = f(x) = 1]}{\displaystyle\sum_{x \in D} I[\hat{f}(x) = 1]}$ & $\dfrac{TP}{TP + FP}$ \\[5mm]
+tasa de verdaderos positivos, \textbf{sensibilidad} (recall) & $tpr = rec = \dfrac{\displaystyle\sum_{x \in D} I[\hat{f}(x) = f(x) = 1]}{\displaystyle\sum_{x \in D} I[f(x) = 1]}$ &  $\dfrac{TP}{FN + TP}$\\[5mm]
+tasa de verdaderos negativos, \textbf{especificidad} & $tnr = \dfrac{\displaystyle\sum_{x \in D} I[\hat{f}(x) = f(x) = 0]}{\displaystyle\sum_{x \in D} I[f(x) = 0]}$ &  \\[5mm]
+tasa de falsos positivos & $fpr = \dfrac{\displaystyle\sum_{x \in D} I[\hat{f}(x) = 1, f(x) = 0]}{\displaystyle\sum_{x \in D} I[f(x) = 0]}$ &  \\[5mm]
+tasa de falsos negativos & $fnr = \dfrac{\displaystyle\sum_{x \in D} I[\hat{f}(x) = 0, f(x) = 1]}{\displaystyle\sum_{x \in D} I[f(x) = 1]}$ & \\[5mm]
+\textbf{Puntuación F1} & $F1 = 2 \cdot \dfrac{pre \cdot rec}{pre + rec}$ & \\[5mm]
+\bottomrule
+\end{tabular}
+\end{center}
+
+Con esto, la matriz de confusión queda definida como:
+\begin{center}\small
+\begin{tabular}{c|c|c}
+    & Predicción: 1 & Predicción: 0 \\
+    \hline
+    Real: 1 & $TP$ & $FN$ \\
+    \hline
+    Real: 0 & $FP$ & $TN$ \\
+\end{tabular}
+\end{center}
+
+\paragraph{Precisión:} Proporción de instancias clasificadas como positivas que son realmente positivas. Se prioriza cuando el costo de un Falso Positivo es alto.
+
+Un ejemplo claro es un filtro de correo spam en un entorno corporativo. Aquí, clasificar un correo importante (legítimo) como spam (Falso Positivo) es grave, pues podría perderse información crítica. Por ello, se prefiere que el modelo sea muy conservador: solo debe marcar como spam si está totalmente seguro, incluso si eso significa dejar pasar algunos correos basura a la bandeja de entrada (baja sensibilidad).
+
+\begin{center}\small
+\begin{tabular}{c|c|c}
+    & Predicción: Spam (1) & Predicción: No Spam (0) \\
+    \hline
+    Real: Spam (1) & 30 (TP) & 50 (FN) \\
+    \hline
+    Real: No Spam (0) & {1 (FP)} & 919 (TN) \\
+\end{tabular}
+\end{center}
+En este caso, minimizamos los Falsos Positivos para maximizar la precisión:
+\[pre = \frac{TP}{TP + FP} = \frac{30}{30 + 1} = \frac{30}{31} \approx 0.968\]
+Esto indica un 96.8\% de confianza. Aunque se filtraron pocos correos de spam del total real (muchos FN), garantizamos que lo que se capturó era efectivamente basura.
+
+\paragraph{Sensibilidad (recall):} Proporción de instancias positivas que fueron correctamente identificadas. Se prioriza cuando el costo de un Falso Negativo es alto.
+
+El mejor ejemplo es el diagnóstico médico de una enfermedad grave y contagiosa. El objetivo es detectar a todos los individuos enfermos. Es preferible alarmar a un paciente sano para realizarle más pruebas (Falso Positivo) que enviar a casa a un paciente enfermo diciéndole que está sano (Falso Negativo), ya que esto tendría consecuencias fatales.
+
+\begin{center}\small
+\begin{tabular}{c|c|c}
+    & Predicción: Enfermo (1) & Predicción: Sano (0) \\
+    \hline
+    Real: Enfermo (1) & 98 (TP) & {2 (FN)} \\
+    \hline
+    Real: Sano (0) & 60 (FP) & 840 (TN) \\
+\end{tabular}
+\end{center}
+Aquí buscamos minimizar los Falsos Negativos a toda costa:
+\[rec = \frac{TP}{TP + FN} = \frac{98}{98 + 2} = \frac{98}{100} = 0.98\]
+El modelo tiene una sensibilidad del 98\%. Detecta casi todos los casos reales, sacrificando la precisión (muchos falsos positivos) en favor de la seguridad.
+
+\subsection{Curva ROC}
+
+Dado un modelo de clasificación binaria que produce probabilidades, es decir,
+\[
+\func{\hat{f}}{X}{[0,1]},
+\]
+dado un umbral de decisión $\theta \in [0,1]$, definimos la función de clasificación binaria asociada como
+\[
+\hat{f}_\theta(x) = \begin{cases}
+1 & \text{si } \hat{f}(x) \geq \theta, \\
+0 & \text{si } \hat{f}(x) < \theta.
+\end{cases}
+\]
+Para cada valor de $\theta$, podemos calcular las métricas del modelo, por ejemplo, la tasa de verdaderos positivos ($tpr_\theta$) y la tasa de falsos positivos ($fpr_\theta$).
+
+\begin{defi}[Curva ROC]
+    La \textbf{curva ROC} (Receiver Operating Characteristic) es la representación gráfica de los pares $(fpr_\theta, tpr_\theta)$ al variar el umbral $\theta$ en el intervalo $[0,1]$.
+\end{defi}
+
+\begin{defi}[Área bajo la curva ROC (AUC)]
+    El \textbf{AUC} (Area Under the Curve) es el área bajo la curva ROC. Un AUC de 1 indica un modelo perfecto, mientras que un AUC de 0.5 indica un modelo sin capacidad discriminativa (equivalente a una clasificación aleatoria).
+\end{defi}
+
+\begin{advertencia}
+    Podemos establecer los siguientes rangos para interpretar el AUC:
+    \begin{itemize}
+        \item $[0.97, 1.00)$: Excelente
+        \item $[0.90, 0.97)$: Muy bueno
+        \item $[0.75, 0.90)$: Bueno
+        \item $[0.60, 0.75)$: Regular
+        \item $[0.50, 0.60)$: Malo
+    \end{itemize}
+\end{advertencia}
+
+\section{Métricas de regresión}
+
+Consideremos un problema de regresión $\func{f}{X}{\R}$ y un modelo de regresión $\func{\hat{f}}{X}{\R}$ que intenta aproximar a $f$. Además, sea un conjunto de datos $D = \{(x_i,y_i)\}_{i=1}^n$ el conjunto de datos utilizado para evaluar el desempeño del modelo, donde $y_i = f(x_i)$.
+
+Definimos las siguientes métricas de evaluación:
+\begin{center}
+\footnotesize
+\begin{tabular}{p{7cm}@{\hspace{5mm}}l}
+\toprule
+\textbf{Medida} & \textbf{Definición} \\[5mm]
+\midrule
+\textbf{Error absoluto medio} (MAE) & $MAE = \dfrac{1}{|D|} \displaystyle\sum_{i=1}^{n} |\hat{f}(x_i) - f(x_i)|$ \\[5mm]
+\textbf{Error cuadrático medio} (MSE) & $MSE = \dfrac{1}{|D|} \displaystyle\sum_{i=1}^{n} (\hat{f}(x_i) - f(x_i))^2$ \\[5mm]
+\textbf{Raíz del error cuadrático medio} (RMSE) & $RMSE = \sqrt{MSE} = \sqrt{\dfrac{1}{|D|} \displaystyle\sum_{i=1}^{n} (\hat{f}(x_i) - f(x_i))^2}$ \\[5mm]
+\textbf{Coeficiente de determinación} ($R^2$) & $R^2 = 1 - \dfrac{\displaystyle\sum_{i=1}^{n} (\hat{f}(x_i) - f(x_i))^2}{\displaystyle\sum_{i=1}^{n} (f(x_i) - \bar{y})^2}$ , donde $\bar{y} = \dfrac{1}{|D|} \displaystyle\sum_{i=1}^{n} f(x_i)$ \\[5mm]
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Algoritmo k-Nearest Neighbors (k-NN)}
+
+
+\begin{defi}[k-Nearest Neighbors (k-NN)]
+Sea \(\{(x_1,y_1),\ldots,(x_m,y_m)\}\) un conjunto de entrenamiento y sea \(k \in \mathbb{N}\).  
+El algoritmo \textbf{k-NN} predice la etiqueta de un nuevo punto \(x\) a partir de las etiquetas de sus \(k\) vecinos más cercanos:
+\begin{itemize}
+    \item \textbf{Clasificación:} se asigna la clase más frecuente entre los vecinos.
+    \[
+        \hat{y} = \operatorname{moda}\{y_{i_1},\ldots,y_{i_k}\}.
+    \]
+    \item \textbf{Regresión:} se asigna el promedio de los valores de los vecinos.
+    \[
+        \hat{y} = \frac{1}{k}\sum_{j=1}^{k} y_{i_j}.
+    \]
+\end{itemize}
+\end{defi}
+
+\begin{defi}[k-NN ponderado]
+En la versión ponderada, cada vecino contribuye según su distancia al punto \(x\).  
+Sea \(x_{i_1},\ldots,x_{i_k}\) el conjunto de los \(k\) vecinos más cercanos y sea
+\[
+w_j = \frac{1}{d(x,x_{i_j})}
+\]
+un peso inversamente proporcional a la distancia.
+
+\begin{itemize}
+    \item \textbf{Regresión ponderada:}
+    \[
+    \hat{y} = \frac{\sum_{j=1}^{k} w_j y_{i_j}}{\sum_{j=1}^{k} w_j}.
+    \]
+
+    \item \textbf{Clasificación ponderada:}
+    Sea \(Y = \{c_1,\ldots,c_r\}\) el conjunto de clases.  
+    Se asigna a \(x\) la clase que maximiza la suma de los pesos de los vecinos pertenecientes a dicha clase:
+    \[
+    \hat{y} = \argmax_{c \in Y} \sum_{j : y_{i_j}=c} w_j.
+    \]
+\end{itemize}
+
+De esta forma, los vecinos más cercanos tienen mayor influencia en la predicción que los más lejanos.
+\end{defi}
+
+
+
+\begin{advertencia}
+El parámetro \(k\) controla el compromiso sesgo-varianza:
+\begin{itemize}
+    \item Valores pequeños de \(k\) producen modelos más sensibles al ruido (alta varianza).
+    \item Valores grandes de \(k\) generan fronteras más suaves (mayor sesgo).
+\end{itemize}
+\end{advertencia}
+
+\end{document}
