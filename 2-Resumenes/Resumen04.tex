@@ -1,0 +1,136 @@
+\documentclass[a4,11pt]{aleph-notas}
+% Se puede ver la documentación aquí: 
+% https://github.com/alephsub0/LaTeX_aleph-notas
+
+% -- Paquetes adicionales 
+\usepackage{enumitem}
+\usepackage{aleph-comandos}
+\usepackage{booktabs}
+
+
+% -- Datos 
+\institucion{Sociedad Ecuatoriana de Estadística}
+\asignatura{Fundamentos de Machine Learning}
+\tema{Resumen no. 4: Aprendizaje no supervisado}
+\autor{Andrés Merino}
+\fecha{Febrero 2026}
+
+\logouno[0.14\textwidth]{Logos/logoSEE}
+\definecolor{colortext}{HTML}{008dc3}
+\definecolor{colordef}{HTML}{008dc3}
+\fuente{montserrat}
+
+
+% -- Comandos adicionales
+\setlist[enumerate]{label=\roman*.}
+
+
+\begin{document}
+
+\encabezado
+
+\section{Fundamentos del Agrupamiento}
+
+\begin{defi}[Agrupamiento]
+Sea \(X = \{x_1, x_2, \ldots, x_n\}\) un conjunto de datos.  
+El agrupamiento consiste en organizar los datos en subconjuntos llamados \emph{clusters}, de modo que los elementos dentro de cada grupo sean más similares entre sí que con los de otros grupos.
+\end{defi}
+
+\begin{defi}[Agrupamiento exclusivo (partición)]
+Un agrupamiento exclusivo de \(X\) es una familia de subconjuntos
+\[
+C_1, C_2, \ldots, C_k
+\]
+tal que:
+\begin{itemize}
+    \item \(C_i \neq \emptyset\) para todo \(i\),
+    \item \(C_i \cap C_j = \emptyset\) si \(i \neq j\),
+    \item \(\bigcup_{i=1}^{k} C_i = X\).
+\end{itemize}
+\end{defi}
+
+\begin{defi}[Agrupamiento con superposición]
+Un agrupamiento con superposición permite que un mismo dato pertenezca a varios clusters.  
+Es decir, existen \(i \neq j\) tales que:
+\[
+C_i \cap C_j \neq \emptyset.
+\]
+Este tipo de agrupamiento modela situaciones donde un elemento puede compartir características de múltiples grupos.
+\end{defi}
+
+\begin{defi}[Agrupamiento difuso]
+En el agrupamiento difuso, cada dato \(x \in X\) tiene un grado de pertenencia a cada cluster, dado por:
+\[
+u_{ij} \in [0,1], \quad \sum_{j=1}^{k} u_{ij} = 1.
+\]
+Esto permite describir pertenencias parciales en lugar de asignaciones estrictas.
+\end{defi}
+
+\begin{defi}[Estructura de un cluster]
+Un cluster puede caracterizarse por:
+\begin{itemize}
+    \item \textbf{Centro}: punto representativo del grupo (por ejemplo, media o centroide),
+    \item \textbf{Dispersión}: variabilidad interna del cluster,
+    \item \textbf{Separación}: distancia respecto a otros clusters.
+\end{itemize}
+\end{defi}
+
+\begin{defi}[Problema general de agrupamiento]
+Dado un conjunto de datos \(X\) y una medida de similitud o distancia, el problema de agrupamiento consiste en encontrar una partición o estructura de clusters que optimice un criterio de cohesión interna y separación externa.
+\end{defi}
+
+\section{Métricas de agrupamiento}
+
+Dado un agrupamiento de datos $\mathcal{C} = \{C_1, C_2, \ldots, C_k\}$, donde cada $C_i$ es un conjunto de datos que representa un clúster, tenemos las siguientes definiciones
+\begin{itemize}
+    \item \textbf{Centroide del clúster:} Es el punto medio del clúster, calculado como el promedio de todos los puntos en el clúster
+    \[
+    \mu_i = \frac{1}{|C_i|} \sum_{x \in C_i} x.
+    \]
+    \item \textbf{Diámetro del clúster:} Mide la distancia máxima entre dos puntos dentro del mismo clúster
+    \[
+    diam(C_i) = \max_{x,y \in C_i} d(x,y).
+    \]
+    \item \textbf{Inercia:} Mide la cohesión interna de los clústeres, definida como la suma de las distancias cuadráticas entre cada punto y el centroide de su clúster
+    \[
+    I_i = \sum_{x \in C_i} d(x, \mu_i)^2.
+    \] 
+    \item \textbf{Distancia promedio dentro del clúster:} Mide la distancia promedio entre los puntos y el centroide del clúster
+    \[
+    S_i = \frac{1}{|C_i|} \sum_{x \in C_i} d(x, \mu_i).
+    \]
+    \item \textbf{Cohesión de Silueta:} Mide la distancia promedio entre un punto y todos los demás puntos en el mismo clúster
+    \[
+        a(x_i) = \frac{1}{|C_i| - 1} \sum_{\substack{x_j \in C_k \\ j \neq i}} d(x_i, x_j).
+    \]
+    \item \textbf{Distancia entre clústeres:} Mide la distancia mínima entre puntos de dos clústeres diferentes
+    \[
+    d(C_i, C_j) = \min_{x \in C_i, y \in C_j} d(x,y).
+    \]
+    \item \textbf{Distancia entre centroides:} Mide la distancia entre los centroides de dos clústeres
+    \[
+    d_c(C_i, C_j)= d(\mu_i, \mu_j).
+    \]
+    \item \textbf{Separación de Silueta:} Mide la distancia promedio entre un punto y todos los puntos en el clúster más cercano al que no pertenece
+    \[
+        b(x_i) = \min_{j \neq i} \frac{1}{|C_j|} \sum_{x_k \in C_j} d(x_i, x_k).
+    \]
+\end{itemize}
+
+Con esto, definimos las siguientes métricas de evaluación:
+\begin{center}
+\footnotesize
+\begin{tabular}{p{7cm}@{\hspace{5mm}}l}
+\toprule
+\textbf{Medida} & \textbf{Definición} \\[5mm]
+\midrule
+\textbf{Inercia total} & $I_{total} = \displaystyle\sum_{i=1}^{K} I_i = \displaystyle\sum_{i=1}^{K} \displaystyle\sum_{x \in C_i} d(x, \mu_i)^2$ \\[5mm]
+\textbf{Índice de Davies-Bouldin} & $DB = \dfrac{1}{K} \displaystyle\sum_{i=1}^{K} \max_{j \neq i} \left( \dfrac{S_i + S_j}{d_c(C_i, C_j)} \right)$ \\[5mm]
+\textbf{Índice de Dunn} & $Dunn = \dfrac{\min_{i \neq j} d(C_i, C_j)}{\max_{1 \leq k \leq K} diam(C_k)}$ \\[5mm]
+\textbf{Índice de Silueta} & $S = \dfrac{1}{|D|} \displaystyle\sum_{i=1}^{|D|} \dfrac{b(x_i) - a(x_i)}{\max\{a(x_i), b(x_i)\}}$ \\[5mm]
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+\end{document}
