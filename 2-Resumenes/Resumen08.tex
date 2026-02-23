@@ -7,7 +7,6 @@
 \usepackage{aleph-comandos}
 \usepackage{booktabs}
 
-
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,calc,positioning,decorations.markings}
 
@@ -29,6 +28,7 @@
 
 % -- Comandos adicionales
 \setlist[enumerate]{label=\roman*.}
+\DeclareMathOperator*{\argmin}{arg\,min}
 
 \begin{document}
 
@@ -143,7 +143,7 @@ De esta manera, tomamos valores aleatorios iniciales para \(w\) y \(b\), y actua
 \]
 donde \(\eta\) es la tasa de aprendizaje. A cada actilización se le denomina \textbf{época}.
 
-\subsection{Perceptrón Sigmoide}
+\section{Perceptrón Sigmoide}
 
 Por simplicidad, podemos agregar a los datos una columna adicional con valor 1, de modo que el sesgo \(b\) se incorpore en el vector de pesos \(w\). Así, en lugar de \(a(x,w,b) = w\cdot  x + b\), usamos
 \[
